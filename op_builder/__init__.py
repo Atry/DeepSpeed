@@ -26,7 +26,7 @@ this_module = sys.modules[__name__]
 
 
 def builder_closure(member_name):
-    if op_builder_dir == "op_builder":
+    if op_builder_dir == "op_builder" or "op_builder.cuda":
         # during installation time cannot get builder due to torch not installed,
         # return closure instead
         def _builder():
@@ -44,7 +44,7 @@ def builder_closure(member_name):
 
 # reflect builder names and add builder closure, such as 'TransformerBuilder()' creates op builder wrt current accelerator
 dir_name = os.path.dirname(this_module.__file__)
-for _, module_name, _ in pkgutil.iter_modules([dir_name, os.path.join(dir_name, 'cuda')]):
+for _, module_name, _ in pkgutil.iter_modules([dir_name]):
     if module_name != 'all_ops' and module_name != 'builder':
         module = importlib.import_module(f".{module_name}", package=op_builder_dir)
         for member_name in module.__dir__():
@@ -52,3 +52,11 @@ for _, module_name, _ in pkgutil.iter_modules([dir_name, os.path.join(dir_name, 
                 # assign builder name to variable with same name
                 # the following is equivalent to i.e. TransformerBuilder = "TransformerBuilder"
                 this_module.__dict__[member_name] = builder_closure(member_name)
+
+# for child folder "cuda"
+op_builder_dir = f"{op_builder_dir}.cuda"
+for _, module_name, _ in pkgutil.iter_modules([os.path.join(dir_name, 'cuda')]):
+    module = importlib.import_module(f".{module_name}", package=op_builder_dir)
+    for member_name in module.__dir__():
+        if member_name.endswith('Builder') and member_name != "OpBuilder" and member_name != "CUDAOpBuilder":
+            this_module.__dict__[member_name] = builder_closure(member_name)

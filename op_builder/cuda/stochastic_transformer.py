@@ -3,7 +3,7 @@
 
 # DeepSpeed Team
 
-from ..transformer import TransformerBuilder
+from .transformer import TransformerBuilder
 
 
 class StochasticTransformerBuilder(TransformerBuilder):
