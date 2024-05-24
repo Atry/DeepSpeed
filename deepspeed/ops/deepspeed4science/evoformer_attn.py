@@ -5,7 +5,7 @@
 
 import torch
 import numpy as np
-from deepspeed.ops.op_builder import EvoformerAttnBuilder
+from deepspeed.ops.op_builder.cuda import EvoformerAttnBuilder
 from deepspeed.accelerator import get_accelerator
 
 kernel_ = None

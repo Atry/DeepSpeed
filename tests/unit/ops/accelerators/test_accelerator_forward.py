@@ -15,7 +15,7 @@ from unit.modeling import BertLayerNorm, BertConfig, BertEncoder as BertEncoderP
 from deepspeed import DeepSpeedTransformerLayer, DeepSpeedTransformerConfig
 from deepspeed.accelerator import get_accelerator
 from unit.common import DistributedTest
-from deepspeed.ops.op_builder import TransformerBuilder
+from deepspeed.ops.op_builder.cuda import TransformerBuilder
 
 if torch.half not in get_accelerator().supported_dtypes():
     pytest.skip(f"fp16 not supported, valid dtype: {get_accelerator().supported_dtypes()}", allow_module_level=True)
